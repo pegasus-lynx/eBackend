@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'api.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'exploapi',
+        'NAME': 'explo',
         'USER': 'explo',
         'PASSWORD': 'explo',
         'HOST': 'localhost',
