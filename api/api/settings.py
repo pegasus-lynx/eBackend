@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_swagger',
+    'user_profile'
 ]
 
 MIDDLEWARE = [
@@ -72,7 +73,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'api.wsgi.application'
 
-
+AUTH_USER_MODEL = "user_profile.User"
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
