@@ -6,7 +6,8 @@ class BarcSerializer(serializers.Serializer):
 
 
 class LitRecSerializer(serializers.Serializer):
-    pass
+    title=serializers.CharField(max_length=2048)
+    Abstract=serializers.CharField(max_length = 2048)
 
 
 class HDMSerializer(serializers.Serializer):
@@ -19,7 +20,8 @@ class EARSerializer(serializers.Serializer):
 
 
 class DracorSerializer(serializers.Serializer):
-    pass
+    Target=serializers.CharField(max_length = 2048)
+    Authors=serializers.ListField(child=serializers.CharField(max_length=32),min_length=1,max_length=64)
 
 
 class DiscoverSerializer(serializers.Serializer):
