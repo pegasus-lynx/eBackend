@@ -26,12 +26,21 @@ class UserLogin(generics.GenericAPIView):
 
         return Response({"detail": "User Logged In."}, status=status.HTTP_200_OK)
 
+
 class UserRegister(generics.CreateAPIView):
     permission_classes = (AllowAny,)
     serializer_class = serializers.UserRegisterSerializer
 
-    def post(self,request):
-        pass
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+
+        return Response(
+            {"detail":'User Registered. Forward to the edit profile page.'},
+            status=status.HTTP_201_CREATED)
+        
+
 
 class UserLogout(views.APIView):
     permission_classes = (IsAuthenticated,)

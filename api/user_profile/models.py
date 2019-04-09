@@ -30,10 +30,6 @@ class User(AbstractUser):
                               max_length=6, blank=True, null=True)
     role = models.IntegerField(choices=USER_ROLES, blank=False, null=False)
 
-    # Profile Link
-    link_linked_in = models.URLField(max_length=200, null=True)
-    link_research_gate = models.URLField(max_length=200, null=True)
-
     # Area of Interest
     area_of_interest = ArrayField(models.CharField(
         max_length=64, blank=False, null=False), size=10)
@@ -47,6 +43,24 @@ class User(AbstractUser):
             return self.first_name + " " + self.last_name
         return self.username
 
+    def set_password(self,old_password,new_password):
+        if self.password != old_password:
+            raise Excpetion()
+        self.password = new_password
+
+    def add_journal(self, journal):
+        return journal.authors.add(self)
+
+    def add_journals(self,journal_list):
+        for journal in journal_list:
+            self.add_journal(journal)
+
+    def add_confrence(self,confrence):
+        return confrence.authors.add(self)
+
+    def add_coonfrences(self,confrence_list):
+        for confrence in confrence_list:
+            self.add_confrence(confrence)
 
 class Publications(models.Model):
     title = models.TextField(max_length=256, blank=False, null=False)
