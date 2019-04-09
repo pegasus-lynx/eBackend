@@ -1,4 +1,5 @@
 # from drf_yasg.utils import swagger_serializer_method
+import re
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 
@@ -38,13 +39,20 @@ class UserRegisterSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=32,required=True)
 
     def validate_username(self, attrs):
+        username = attrs.get('username', None)
+        if not re.match(r'^[a-zA-Z0-9_.-]+$', username):
+            raise serializers.ValueError('Invalid username')
         pass
 
     def validate_password(self,attrs):
-        pass
+        password = attrs.get('password', None)
+        if not re.match(r'[A-Za-z0-9@#$%^&+=]{8,}', password):
+            raise serializers.ValueError('Password must contain atleast 8 characters, including atleast 1 uppercase and 1 lowercase alphabet, atleast 1 digit and a special character')
 
     def validate_email(self, attrs):
-        pass
+        email = attrs.get('email', None)
+        if not re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)",email ):
+            raise serializers.ValueError('Invalid E-mail address')
 
     def validate(self,attrs):
         pass
@@ -59,7 +67,13 @@ class PasswordChangeSerializer(serializers.Serializer):
     confirm_password  =serializers.CharField(max_length=32, required=True)
 
     def validate_password(self, attrs):
-        pass
+        password_old = attrs.get('old_password', None)        
+        password_new = attrs.get('new_password', None)
+        if not re.match(r'[A-Za-z0-9@#$%^&+=]{8,}', password_old):
+            raise serializers.ValueError('Old password is invalid')
+        if not re.match(r'[A-Za-z0-9@#$%^&+=]{8,}', password_new):
+            raise serializers.ValueError('New password is invalid')
+        
 
     
 
@@ -84,8 +98,23 @@ class UserListSerializer(serializers.ModelSerializer):
 
 
 class JournalDetailSerializer(serialziers.ModelSerializer):
-    pass
+    class Meta:
+        model=Journals
+        fields= (
+            'title','year','authors_list','journal','indexed_in'
+            )
 
 
 class ConfrenceDetailSerializer(serializers.ModelSerializer):
-    pass
+    class Meta:
+        model= ConfrenceDetailSerializer
+        fields= (
+            'title','year','authors_list','description'
+            )
+
+class ProfileLinksDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        models=ProfileLinks
+        fields = (
+            'link_linked_in','link_research_gate','link_google_scholar','link_dblp','link_github','link_publons',
+            )
