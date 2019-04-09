@@ -54,11 +54,6 @@ class UserRegisterSerializer(serializers.Serializer):
         if not re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)",email ):
             raise serializers.ValueError('Invalid E-mail address')
 
-    def validate(self,attrs):
-        pass
-
-    def save(self, attrs):
-        pass
 
 
 class PasswordChangeSerializer(serializers.Serializer):

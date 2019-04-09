@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.fields import ArrayField
 
+
+from general.models import Publications
 # Create your models here.
 
 
@@ -61,19 +63,6 @@ class User(AbstractUser):
     def add_coonfrences(self,confrence_list):
         for confrence in confrence_list:
             self.add_confrence(confrence)
-
-class Publications(models.Model):
-    title = models.TextField(max_length=256, blank=False, null=False)
-    year = models.DateField(null=False)
-    authors_list = ArrayField(models.CharField(
-        max_length=48, blank=False), size=10)
-    authors = models.ManyToManyField(User)
-
-    class Meta:
-        abstract = True
-
-    def __str__(self):
-        return self.title.upper()
 
 
 class Journals(Publications):
