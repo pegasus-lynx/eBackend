@@ -18,7 +18,7 @@ from django.urls import path
 from django.conf.urls import url, include
 
 urlpatterns = [
-    # url(r'^docs/', include('rest_framework_swagger.urls')),
+    url(r'^docs/', include('rest_framework_swagger.urls')),
     path('admin/', admin.site.urls),
     path('', include('user_profile.urls'))
 ]
