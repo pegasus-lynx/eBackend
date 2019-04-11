@@ -70,21 +70,30 @@ class PasswordChangeSerializer(serializers.Serializer):
             raise serializers.ValueError('New password is invalid')
         
 
-    
+class ProfileDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Profile
+        fields = '__all__'
+
 
 class UserDetailSerializer(serializers.ModelSerializer):
+    profile = ProfileDetailSerializer()
+
     class Meta:
         model = models.User
         fields = (
-            'pk', 'username', 'email', 'full_name', 'gender', 'bio',
-            'institution', 'department', 'dob', 'role'
+            'pk', 'username', 'email', 'full_name', 'profile'
         )
         read_only_fields = (
-            'username', 'email', 'gender', 'full_name'
+            'username', 'email', 'full_name', 'profile'
         )
 
 
 class UserListSerializer(serializers.ModelSerializer):
+    bio = serializers.SerializerMethodField(source="profile.bio")
+    role = serializers.SerializerMethodField(source="profile.role")
+    institution = serializers.SerializerMethodField(source="profile.institution")
+    
     class Meta:
         model = models.User
         fields = (

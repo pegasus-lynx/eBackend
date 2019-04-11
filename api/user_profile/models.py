@@ -8,7 +8,24 @@ from general.models import Publications
 
 
 class User(AbstractUser):
-    # Fields Required:
+    # Fields Required
+    def __str__(self):
+        return self.get_full_name
+
+    @property
+    def full_name(self):
+        if self.first_name or self.last_name:
+            return self.first_name + " " + self.last_name
+        return self.username
+
+    def change_password(self,old_password,new_password):
+        if self.password != old_password:
+            raise Excpetion()
+        self.password = new_password
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
 
     GENDER_CHOICES = (('M', 'Male'), ('F', 'Female'))
 
@@ -34,21 +51,7 @@ class User(AbstractUser):
 
     # Area of Interest
     area_of_interest = ArrayField(models.CharField(
-        max_length=64, blank=False, null=False), size=10)
-
-    def __str__(self):
-        return self.get_full_name
-
-    @property
-    def full_name(self):
-        if self.first_name or self.last_name:
-            return self.first_name + " " + self.last_name
-        return self.username
-
-    def set_password(self,old_password,new_password):
-        if self.password != old_password:
-            raise Excpetion()
-        self.password = new_password
+        max_length=64, blank=False, null=False), size=10, null=True)
 
     def add_journal(self, journal):
         return journal.authors.add(self)
@@ -64,7 +67,6 @@ class User(AbstractUser):
         for confrence in confrence_list:
             self.add_confrence(confrence)
 
-
 class Journals(Publications):
     journal = models.TextField(max_length=128, null=False, blank=False)
     indexed_in = models.CharField(max_length=128, blank=True, null=True)
@@ -77,11 +79,11 @@ class Confrences(Publications):
 
 
 class ProfileLinks(models.Model):
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, )
     link_linked_in = models.URLField(max_length=200, null=False)
     link_research_gate = models.URLField(max_length=200, null=False)
     link_google_scholar = models.URLField(max_length=200, null=False)
     link_dblp = models.URLField(max_length=200, null=False)
     link_github = models.URLField(max_length=200, null=False)
     link_publons = models.URLField(max_length=200, null=False)
-
-    person = models.ForeignKey(User, on_delete=models.CASCADE)

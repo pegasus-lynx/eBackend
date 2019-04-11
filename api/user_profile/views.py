@@ -34,9 +34,8 @@ class UserRegister(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.save(role=0)
+        user = serializer.save()
         user.save()
-        print('OK')
 
         return Response(
             {"detail":'User Registered. Forward to the edit profile page.'},
