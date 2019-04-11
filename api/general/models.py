@@ -8,7 +8,6 @@ class Publications(models.Model):
     year = models.DateField(null=False)
     authors_list = ArrayField(models.CharField(
         max_length=48, blank=False), size=10)
-    authors = models.ManyToManyField(User)
 
     class Meta:
         abstract = True

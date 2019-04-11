@@ -8,7 +8,6 @@ class ResearchPaper(Publications):
     abstract = models.TextField(max_length=1024, blank=False,  null=False)
     venue = models.CharField(max_length=128, blank=True, null=True)
     paper_id = models.UUIDField(blank=False, null=False)
-    references =  models.ManyToManyField(ResearchPaper)
 
 
 class HDMRequestModel(models.Model):

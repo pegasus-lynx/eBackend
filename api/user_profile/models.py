@@ -68,10 +68,12 @@ class User(AbstractUser):
 class Journals(Publications):
     journal = models.TextField(max_length=128, null=False, blank=False)
     indexed_in = models.CharField(max_length=128, blank=True, null=True)
+    authors = models.ManyToManyField(User)
 
 
 class Confrences(Publications):
     description = models.TextField(max_length=256, null=False, blank=False)
+    authors = models.ManyToManyField(User)
 
 
 class ProfileLinks(models.Model):

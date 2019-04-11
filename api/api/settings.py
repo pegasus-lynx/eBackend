@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     'rest_framework_swagger',
     'user_profile',
     'rest_framework.authtoken',
+    'general',
+    'recommender',
+    'drf_yasg'
 
 ]
 

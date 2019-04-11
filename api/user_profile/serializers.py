@@ -4,7 +4,7 @@ from rest_framework import serializers
 from django.contrib.auth import authenticate
 
 
-from .models import User
+from . import models
 
 class TokenSerializer(serializers.Serializer):
     token = serializers.ReadOnlyField()
@@ -34,25 +34,25 @@ class UserLoginSerializer(serializers.Serializer):
 class UserRegisterSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=32,required=True)
     first_name = serializers.CharField(max_length=32, required=True)
-    lest_name = serializers.CharField(max_length = 32, required = False)
+    last_name = serializers.CharField(max_length = 32, required = False)
     email = serializers.EmailField(required=True)
     password = serializers.CharField(max_length=32,required=True)
 
-    def validate_username(self, attrs):
-        username = attrs.get('username', None)
-        if not re.match(r'^[a-zA-Z0-9_.-]+$', username):
-            raise serializers.ValueError('Invalid username')
-        pass
-
     def validate_password(self,attrs):
-        password = attrs.get('password', None)
+        password = self.initial_data.get('password', None)
+        return password
         if not re.match(r'[A-Za-z0-9@#$%^&+=]{8,}', password):
-            raise serializers.ValueError('Password must contain atleast 8 characters, including atleast 1 uppercase and 1 lowercase alphabet, atleast 1 digit and a special character')
+            raise serializers.ValidationError('Password must contain atleast 8 characters, including atleast 1 uppercase and 1 lowercase alphabet, atleast 1 digit and a special character')
 
-    def validate_email(self, attrs):
-        email = attrs.get('email', None)
-        if not re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)",email ):
-            raise serializers.ValueError('Invalid E-mail address')
+    # def validate_email(self, attrs):
+    #     email = self.initial_data.get('email', None)
+    #     if not re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)",email ):
+    #         raise serializers.ValidationError('Invalid E-mail address')
+
+    def create(self,validated_data):
+        print('-'*150)
+        print(validated_data)
+        return models.User(**validated_data)
 
 
 
@@ -74,7 +74,7 @@ class PasswordChangeSerializer(serializers.Serializer):
 
 class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = models.User
         fields = (
             'pk', 'username', 'email', 'full_name', 'gender', 'bio',
             'institution', 'department', 'dob', 'role'
@@ -86,15 +86,15 @@ class UserDetailSerializer(serializers.ModelSerializer):
 
 class UserListSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = models.User
         fields = (
             'pk', 'full_name', 'bio', 'role', 'institution'
         )
 
 
-class JournalDetailSerializer(serialziers.ModelSerializer):
+class JournalDetailSerializer(serializers.ModelSerializer):
     class Meta:
-        model=Journals
+        model= models.Journals
         fields= (
             'title','year','authors_list','journal','indexed_in'
             )
@@ -102,14 +102,14 @@ class JournalDetailSerializer(serialziers.ModelSerializer):
 
 class ConfrenceDetailSerializer(serializers.ModelSerializer):
     class Meta:
-        model= ConfrenceDetailSerializer
+        model= models.Confrences
         fields= (
             'title','year','authors_list','description'
             )
 
 class ProfileLinksDetailSerializer(serializers.ModelSerializer):
     class Meta:
-        models=ProfileLinks
+        models= models.ProfileLinks
         fields = (
             'link_linked_in','link_research_gate','link_google_scholar','link_dblp','link_github','link_publons',
             )

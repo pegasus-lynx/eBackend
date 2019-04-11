@@ -1,8 +1,8 @@
 from django.shortcuts import render
-from djnago.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, logout, authenticate
 from rest_framework import generics
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status, views
 
 from .permissions import IsOwner
@@ -34,7 +34,9 @@ class UserRegister(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.save()
+        user = serializer.save(role=0)
+        user.save()
+        print('OK')
 
         return Response(
             {"detail":'User Registered. Forward to the edit profile page.'},
@@ -53,9 +55,9 @@ class UserLogout(views.APIView):
         return Response({"detail":"Logged out of system."}, status=status.HTTP_200_OK)
 
 
-class UserPasswordChange(views.GenericAPIView):
+class UserPasswordChange(generics.GenericAPIView):
     permission_classes = (IsAuthenticated,)
-    serializer_class = PasswordChangeSerializer
+    serializer_class = serializers.PasswordChangeSerializer
 
     def post(self, request):
         serialzier = self.get_serializer()

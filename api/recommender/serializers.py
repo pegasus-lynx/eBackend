@@ -31,3 +31,11 @@ class DiscoverSerializer(serializers.Serializer):
 class CnaverSerializer(serializers.Serializer):
     title = serializers.CharField(max_length= 256)
     abstract = serializers.CharField(max_length = 2048)
+
+
+class ResearchPaperSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = (
+            '__all__'
+        )
+        read_only_fields = ( '__all__' )
