@@ -10,7 +10,7 @@ from general.models import Publications
 class User(AbstractUser):
     # Fields Required
     def __str__(self):
-        return self.get_full_name
+        return self.full_name
 
     @property
     def full_name(self):
@@ -18,10 +18,6 @@ class User(AbstractUser):
             return self.first_name + " " + self.last_name
         return self.username
 
-    def change_password(self,old_password,new_password):
-        if self.password != old_password:
-            raise Excpetion()
-        self.password = new_password
 
 
 class Profile(models.Model):

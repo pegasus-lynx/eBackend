@@ -4,10 +4,11 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status, views
+from rest_framework.authtoken.models import Token
 
-from .permissions import IsOwner
+from .permissions import IsOwner, IsUserAuthenticated
 from . import serializers
-from .models import User
+from . import models
 
 # Create your views here.
 
@@ -17,10 +18,13 @@ class UserLogin(generics.GenericAPIView):
 
     def post(self,request,*args,**kwargs):
         self.request = request
-        self.serializer = self.get_serializer()
+        self.serializer = self.get_serializer(data=request.data, context={'request':request})
         self.serializer.is_valid(raise_exception=True)
         
-        user = self.serializer.data['user']
+        print('-'*200)
+
+        validated_data = self.serializer.validated_data
+        user = validated_data['user']
 
         login(request,user)
 
@@ -35,16 +39,17 @@ class UserRegister(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
+        user.set_password(serializer.data['password'])
         user.save()
 
         return Response(
-            {"detail":'User Registered. Forward to the edit profile page.'},
+            {"detail":'User Registered. Forward to the edit profile page.\n'},
             status=status.HTTP_201_CREATED)
         
 
 
 class UserLogout(views.APIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsUserAuthenticated,)
 
     def post(self, request):
         try:
@@ -62,43 +67,46 @@ class UserPasswordChange(generics.GenericAPIView):
         serialzier = self.get_serializer()
         serialzier.is_valid(raise_exception=True)
 
-        user = request.user
+        user = None
 
         old_password = serializer.data['old_password']
         new_password = serializer.data['new_password']
 
-        try:
-            user.set_password(old_password,new_password)
-        except Exception as e:
+        user = authenticate(username=request.user.username, password=old_password)
+
+        if user == request.user:
+            user.set_password(new_password)
+        else:
             return Response({'detail':"Wrong Old Password"},status=status.HTTP_400_BAD_REQUEST)
 
         return Response({'detail': "Password Changed"}, status=status.HTTP_200_OK)
 
 
-class EditProfile(generics.UpdateAPIView):
-    permission_classes = (IsAuthenticated, IsOwner)
-    serializer_class = serializers.UserDetailSerializer
-
-    def get_object(self):
-        user = self.request.user
-        return user
-
-class SelfProfile(generics.RetrieveAPIView):
+class ProfileCreate(generics.CreateAPIView):
     permission_classes = (IsAuthenticated,)
-    serializer_class = serializers.UserDetailSerializer
+    serializer_class = serializers.ProfileDetailSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        profile = models.Profile(**validated_data)
+        profile.save()
+
+        return profile
+
+
+class ProfileSelf(generics.RetrieveUpdateAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.ProfileDetailSerializer
 
     def get_object(self):
         user = self.request.user
-        return user
-
+        return user.profile
 
 class UserDetail(generics.RetrieveAPIView):
     permission_classes =  (AllowAny,)
     serializer_class = serializers.UserDetailSerializer
-    queryset = User.objects.all()
+    queryset = models.User.objects.all()
     lookup_url_kwarg = 'user_pk'
 
-
-# class UserList(generics.ListAPIView):
-#     permission_classes = (AllowAny,)
-#     serializer_class = 

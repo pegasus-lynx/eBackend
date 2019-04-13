@@ -5,9 +5,9 @@ from . import views
 urlpatterns = [
     path('user/', include([
         # path('', views.user_list, name='user_list'),
-        path('self/', include([
-            path('', views.SelfProfile.as_view(), name='self_profile'),
-            path('edit/', views.EditProfile.as_view(), name='edit_profile'),
+        path('profile/', include([
+            path('', views.ProfileSelf.as_view(), name='self_profile'),
+            path('create/', views.ProfileCreate.as_view(), name='create_profile'),
         ])),
         path('<int:user_pk>/', views.UserDetail.as_view(), name='user_detail'),
     ])),
