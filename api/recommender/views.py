@@ -12,23 +12,9 @@ from user_profile.models import User
 from . import serializers
 # Create your views here.
 
-class BarcView(generics.GenericAPIView):
+class BarcRequestView(generics.GenericAPIView):
     pass
 
-class HDMView(generics.GenericAPIView):
-    pass
 
-class EARView(generics.GenericAPIView):
-    pass
-
-class LitRecView(generics.GenericAPIView):
-    pass
-
-class DracorView(generics.GenericAPIView):
-    pass
-
-class DiscoverView(generics.GenericAPIView):
-    pass
-
-class CnaverView(generics.GenericAPIView):
+class BarcResultView(generics.RetrieveAPIView):
     pass
