@@ -16,10 +16,8 @@ class UserLoginSerializer(serializers.Serializer):
         password = self.initial_data.get('password', None)
 
         user = None
-        print(username, password)
 
         if username and password:
-            print('OK')
             user = authenticate(username=username, password=password)
         else:
             raise serializers.ValidationError('Incomplete Credentials')

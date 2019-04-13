@@ -22,10 +22,9 @@ class UserLogin(generics.GenericAPIView):
         self.serializer.is_valid(raise_exception=True)
         
         print('-'*200)
-
         validated_data = self.serializer.validated_data
         user = validated_data['user']
-
+        print(user)
         login(request,user)
 
         return Response({"detail": "User Logged In."}, status=status.HTTP_200_OK)
@@ -49,14 +48,18 @@ class UserRegister(generics.CreateAPIView):
 
 
 class UserLogout(views.APIView):
-    permission_classes = (IsUserAuthenticated,)
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
-        try:
-            logout(request)
-        except Exception as e:
-            return Response({'detail': "Could not log out"}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({"detail":"Logged out of system."}, status=status.HTTP_200_OK)
+        print(request.user)
+        logout(request)
+        print(request.user)
+        return Response(status=status.HTTP_200_OK)
+        # try:
+        #     logout(request)
+        # except Exception as e:
+        #     return Response({'detail': "Could not log out"}, status=status.HTTP_400_BAD_REQUEST)
+        # return Response({"detail":"Logged out of system."}, status=status.HTTP_200_OK)
 
 
 class UserPasswordChange(generics.GenericAPIView):
@@ -84,16 +87,17 @@ class UserPasswordChange(generics.GenericAPIView):
 
 class ProfileCreate(generics.CreateAPIView):
     permission_classes = (IsAuthenticated,)
-    serializer_class = serializers.ProfileDetailSerializer
+    serializer_class = serializers.ProfileSerializer
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
-        profile = models.Profile(**validated_data)
+        user = request.user
+        validated_data = serializer.validated_data
+        profile = models.Profile(user=user,**validated_data)
         profile.save()
 
-        return profile
+        return Response(serializers.ProfileDetailSerializer(profile).data)
 
 
 class ProfileSelf(generics.RetrieveUpdateAPIView):

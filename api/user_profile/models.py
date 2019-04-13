@@ -49,6 +49,9 @@ class Profile(models.Model):
     area_of_interest = ArrayField(models.CharField(
         max_length=64, blank=False, null=False), size=10, null=True)
 
+    def full_name(self):
+        return self.user.full_name
+
     def add_journal(self, journal):
         return journal.authors.add(self)
 
@@ -64,19 +67,21 @@ class Profile(models.Model):
             self.add_confrence(confrence)
 
 class Journals(Publications):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     journal = models.TextField(max_length=128, null=False, blank=False)
     indexed_in = models.CharField(max_length=128, blank=True, null=True)
     authors = models.ManyToManyField(User)
 
 
 class Confrences(Publications):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     description = models.TextField(max_length=256, null=False, blank=False)
     authors = models.ManyToManyField(User)
 
 
 class ProfileLinks(models.Model):
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE, )
+    profile = models.OneToOneField(Profile, on_delete=models.CASCADE )
     link_linked_in = models.URLField(max_length=200, null=False)
     link_research_gate = models.URLField(max_length=200, null=False)
     link_google_scholar = models.URLField(max_length=200, null=False)
