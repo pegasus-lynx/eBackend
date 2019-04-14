@@ -100,6 +100,55 @@ class ProfileCreate(generics.CreateAPIView):
         return Response(serializers.ProfileDetailSerializer(profile).data)
 
 
+class JournalsSelf(generics.ListCreateAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.JournalDetailSerializer
+    
+    def get_queryset(self):
+        user = self.request.user
+        return user.journals_set.all()
+
+    def perform_create(self, serializer):
+        profile = self.request.user.profile
+        serializer.save(profile=profile)
+
+
+class ConfrencesSelf(generics.ListCreateAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.ConfrenceDetailSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return user.confrences_set.all()
+
+    def perform_create(self, serializer):
+        profile = self.request.user.profile
+        serializer.save(profile=profile)
+
+class UserJournals(generics.ListAPIView):
+    permission_classes = (AllowAny,)
+    serializer_class = serializers.JournalDetailSerializer
+    lookup_url_kwarg = 'user_pk'
+    
+    def get_queryset(self):
+        user = models.User.objects.get(pk=self.request.kwargs['user_pk'])
+        if not user:
+            return models.models.QuerySet.none()
+        return models.Journals.objects.all().filter(user=user)
+            
+
+class UserConfrences(generics.ListAPIView):
+    permission_classes = (AllowAny,)
+    serializer_class = serializers.ConfrenceDetailSerializer
+    lookup_url_kwarg = 'user_pk'
+
+    def get_queryser(self):
+        user = models.User.objects.get(pk=self.request.kwargs['user_pk'])
+        if not user:
+            return models.models.QuerySet.none()
+        return models.Confrences.objects.all().filter(user=user)
+
+
 class ProfileSelf(generics.RetrieveUpdateAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.ProfileDetailSerializer

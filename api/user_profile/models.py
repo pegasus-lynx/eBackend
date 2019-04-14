@@ -62,7 +62,7 @@ class Profile(models.Model):
     def add_confrence(self,confrence):
         return confrence.authors.add(self)
 
-    def add_coonfrences(self,confrence_list):
+    def add_confrences(self,confrence_list):
         for confrence in confrence_list:
             self.add_confrence(confrence)
 

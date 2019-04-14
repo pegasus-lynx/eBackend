@@ -4,12 +4,17 @@ from . import views
 
 urlpatterns = [
     path('user/', include([
-        # path('', views.user_list, name='user_list'),
-        path('profile/', include([
-            path('', views.ProfileSelf.as_view(), name='self_profile'),
-            path('create/', views.ProfileCreate.as_view(), name='create_profile'),
+        path('self/', include([
+            path('', views.ProfileSelf.as_view(), name='self_detail'),
+            path('create/', views.ProfileCreate.as_view(), name='self_create_profile'),
+            path('journals/', views.JournalsSelf.as_view(), name='self_journals'),
+            path('confrences/', views.ConfrencesSelf.as_view(), name='self_confrences'),
+        ]))
+        path('<int:user_pk>/', include([
+            path('profile/', views.UserDetail.as_view(), name='user_profile'),
+            path('journals/', views.UserJournals.as_view(), name='user_journals'),
+            path('confrences/', view.UserConfrences.as_view(), name='user_confrences'),
         ])),
-        path('<int:user_pk>/', views.UserDetail.as_view(), name='user_detail'),
     ])),
     path('login/', views.UserLogin.as_view(), name='user_login'),
     path('logout/', views.UserLogout.as_view(), name='user_logout'),
