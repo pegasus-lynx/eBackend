@@ -8,7 +8,12 @@ from .  import models
 class BarcSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.BarcRequest
-        fields = '__all__'
+        fields = (
+            'title', 'abstract', 'created', 'result_token', 'result_generated'
+        )
+        read_only_fields = (
+            'created', 'result_token', 'result_generated'
+        )
 
 
 class BarcResultSerializer(serializers.Serializer):

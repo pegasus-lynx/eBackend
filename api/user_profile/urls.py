@@ -9,11 +9,11 @@ urlpatterns = [
             path('create/', views.ProfileCreate.as_view(), name='self_create_profile'),
             path('journals/', views.JournalsSelf.as_view(), name='self_journals'),
             path('confrences/', views.ConfrencesSelf.as_view(), name='self_confrences'),
-        ]))
+        ])),
         path('<int:user_pk>/', include([
             path('profile/', views.UserDetail.as_view(), name='user_profile'),
             path('journals/', views.UserJournals.as_view(), name='user_journals'),
-            path('confrences/', view.UserConfrences.as_view(), name='user_confrences'),
+            path('confrences/', views.UserConfrences.as_view(), name='user_confrences'),
         ])),
     ])),
     path('login/', views.UserLogin.as_view(), name='user_login'),
