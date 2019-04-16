@@ -8,7 +8,7 @@ urlpatterns = [
             path('barc/', views.BarcRequestView.as_view(), name='barc_query'),
         ])),
         path('result/', include([
-            path('barc/<uuid:result_token>/', views.BarcResultView.as_view(), name='barc_result'),
+            path('barc/<str:result_token>/', views.BarcResultView.as_view(), name='barc_result'),
         ])),
-    ]),
+    ])),
 ]

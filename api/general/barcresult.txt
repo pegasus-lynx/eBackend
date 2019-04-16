@@ -1,0 +1,10 @@
+This file lists how to modify the existing code to obtain the result from barc using the api
+
+1. Replace run.sh and modules/top_paper_author_conf.py with the files in the zip.
+2. Place the script.py file in the directory same as run.sh
+3. Make a result folder in the same directory.
+4. Rename input_one.json as single_input.json.
+
+## For all users change the path as required according to the directory where you place the Barc modules
+## For setting Barc folder:
+    After extracting the zip rename it as Barc-modified.

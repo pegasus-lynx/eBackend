@@ -9,7 +9,7 @@ from general.models import Publications
 class BarcRequest(models.Model):
     title = models.CharField(max_length=128,null=False)
     abstract = models.TextField(max_length=1024,null=False)
-    created = models.DateTimeField(auto_now_add=True, default=)
+    created = models.DateTimeField(auto_now_add=True)
     result_token =  models.CharField(max_length=32)
     result_generated = models.BooleanField(default=False)
 

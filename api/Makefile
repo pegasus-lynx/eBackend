@@ -9,7 +9,7 @@ migrations: ### Generates Django migrations.
 	@echo "Done!"
 
 server: ### Runs a local development server at http://0.0.0.0:8000
-	@python manage.py runserver 0:8000
+	@python manage.py runserver
 
 resetdb: ### Resets local PostgreSQL database.
 	dropdb explo -U explo

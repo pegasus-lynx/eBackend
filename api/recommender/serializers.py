@@ -17,7 +17,8 @@ class BarcSerializer(serializers.ModelSerializer):
 
 
 class BarcResultSerializer(serializers.Serializer):
-    query = BarcSerializer()
+    title = serializers.CharField(max_length=128)
+    abstract = serializers.CharField(max_length=1024)
     top_papers = serializers.ListField(serializers.CharField(max_length=128))
     top_authors = serializers.ListField(serializers.CharField(max_length=32))
     top_confrences = serializers.ListField(serializers.CharField(max_length=128))

@@ -40,5 +40,6 @@ urlpatterns = [
     url(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     # url(r'^docs/', include('rest_framework_swagger.urls')),
     path('admin/', admin.site.urls),
-    path('', include('user_profile.urls'))
+    path('', include('user_profile.urls')),
+    path('', include('recommender.urls'))
 ]
