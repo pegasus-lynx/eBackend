@@ -16,9 +16,9 @@ urlpatterns = [
             path('confrences/', views.UserConfrences.as_view(), name='user_confrences'),
         ])),
     ])),
-    path('login/', views.UserLogin.as_view(), name='user_login'),
-    path('logout/', views.UserLogout.as_view(), name='user_logout'),
-    path('register/', views.UserRegister.as_view(), name='user_register'),
-    path('password/change/', views.UserPasswordChange.as_view(),
+    path('login/', views.LoginView.as_view(), name='user_login'),
+    path('logout/', views.LogoutView.as_view(), name='user_logout'),
+    path('register/', views.RegisterView.as_view(), name='user_register'),
+    path('password/change/', views.PasswordChangeView.as_view(),
          name='user_password_change')
 ]
