@@ -1,10 +1,9 @@
 from django.shortcuts import render
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login as d_login, logout, authenticate
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status, views
-from rest_framework.authtoken.models import Token
 
 from .permissions import IsOwner, IsUserAuthenticated
 from . import serializers
@@ -16,9 +15,24 @@ from rest_framework.authentication import TokenAuthentication
 # Create your views here.
 
 
+def create_auth_token(user):
+    token, created = Token.objects.get_or_create(user=user)
+    return token
+
+
 class LoginView(generics.GenericAPIView):
     permission_classes = (AllowAny,)
+    # authentication_classes = (TokenAuthentication,)
     serializer_class = serializers.UserLoginSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        pass
+
+    def login(self):
+        validated_data = self.serializer.validated_data
+        self.user = validated_data['user']
+        d_login(self.request, self.user)
+        self.token = create_auth_token(self.user)
 
     def post(self, request, *args, **kwargs):
         self.request = request
@@ -26,34 +40,38 @@ class LoginView(generics.GenericAPIView):
             data=request.data, context={'request': request})
         self.serializer.is_valid(raise_exception=True)
 
-        validated_data = self.serializer.validated_data
-        user = validated_data['user']
-        login(request, user)
-        print(user)
-        token, created = Token.objects.get_or_create(user=user)
+        self.login()
 
         return Response(
             {
-                "token": token.key
+                "user_id": self.user.pk,
+                "token": self.token.key
             },
             status=status.HTTP_200_OK)
 
 
-class RegisterView(generics.CreateAPIView):
+class RegisterView(generics.GenericAPIView):
     permission_classes = (AllowAny,)
     serializer_class = serializers.UserRegisterSerializer
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
-        user.set_password(serializer.data['password'])
-        user.save()
-        print(user)
+    def register(self):
+        self.user = self.serializer.save()
+        self.user.set_password(self.serializer.data['password'])
+        self.user.save()
+        self.token = create_auth_token(self.user)
+
+    def post(self, request, *args, **kwargs):
+        self.request = request
+        self.serializer = self.get_serializer(
+            data=request.data, context={'request': request}
+        )
+        self.serializer.is_valid(raise_exception=True)
+        self.register()
 
         return Response(
             {
-                "user": serializers.UserBriefSerializer(user).data
+                "user_id": self.user.pk,
+                "token": self.token.key
             },
             status=status.HTTP_201_CREATED)
 
@@ -66,6 +84,10 @@ class LogoutView(views.APIView):
         logout(request)
         print(request.user)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class GetAuthToken(views.APIView):
+    pass
 
 
 class PasswordChangeView(generics.GenericAPIView):
