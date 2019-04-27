@@ -6,6 +6,7 @@ urlpatterns = [
     path('user/', include([
         path('self/', include([
             path('', views.ProfileSelf.as_view(), name='self_detail'),
+            path('info/', views.InfoSelf.as_view(), name="self_breif_info"),
             path('create/', views.ProfileCreate.as_view(),
                  name='self_create_profile'),
             path('journals/', views.JournalsSelf.as_view(), name='self_journals'),
@@ -13,6 +14,7 @@ urlpatterns = [
                  name='self_confrences'),
         ])),
         path('<int:user_pk>/', include([
+            path('info/', views.UserInfo.as_view(), name='user_breif'),
             path('profile/', views.UserDetail.as_view(), name='user_profile'),
             path('journals/', views.UserJournals.as_view(), name='user_journals'),
             path('confrences/', views.UserConfrences.as_view(),

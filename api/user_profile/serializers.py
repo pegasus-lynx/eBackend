@@ -65,7 +65,7 @@ class ConfrenceBriefSerializer(serializers.ModelSerializer):
 
 class ProfileDetailSerializer(serializers.ModelSerializer):
     journals = serializers.SerializerMethodField()
-    confrences = serializers.SerializerMethodField()
+    # confrences = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Profile
@@ -73,16 +73,16 @@ class ProfileDetailSerializer(serializers.ModelSerializer):
             'role', 'bio', 'gender',
             'department', 'institution',
             'dob', 'area_of_interest',
-            'journals', 'confrences'
+            'journals'
         )
 
     @swagger_serializer_method(JournalBriefSerializer(many=True))
     def get_journals(self, obj):
         return obj.journals_set.all()
 
-    @swagger_serializer_method(ConfrenceBriefSerializer(many=True))
-    def get_confrences(self, obj):
-        return obj.confrences_set.all()
+    # @swagger_serializer_method(ConfrenceBriefSerializer(many=True))
+    # def get_confrences(self, obj):
+    #     return obj.confrences_set.all()
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -109,16 +109,27 @@ class UserDetailSerializer(serializers.ModelSerializer):
 
 
 class UserBriefSerializer(serializers.ModelSerializer):
-    bio = serializers.SerializerMethodField(source="profile.bio")
-    role = serializers.SerializerMethodField(source="profile.role")
-    institution = serializers.SerializerMethodField(
-        source="profile.institution")
+    role = serializers.SerializerMethodField()
+    institution = serializers.SerializerMethodField()
+    dob = serializers.SerializerMethodField()
 
     class Meta:
         model = models.User
         fields = (
-            'pk', 'full_name', 'bio', 'role', 'institution'
+            'pk', 'full_name', 'email', 'dob', 'role', 'institution'
         )
+
+    @swagger_serializer_method(serializers.CharField(max_length=20))
+    def get_dob(self, obj):
+        return obj.profile.dob
+
+    @swagger_serializer_method(serializers.ChoiceField(choices=[0, 1, 2, 3]))
+    def get_role(self, obj):
+        return obj.profile.role
+
+    @swagger_serializer_method(serializers.CharField(max_length=20))
+    def get_institution(self, obj):
+        return obj.profile.institution
 
 
 class JournalDetailSerializer(serializers.ModelSerializer):

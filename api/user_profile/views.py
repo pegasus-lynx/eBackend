@@ -172,7 +172,7 @@ class UserConfrences(generics.ListAPIView):
     serializer_class = serializers.ConfrenceDetailSerializer
     lookup_url_kwarg = 'user_pk'
 
-    def get_queryser(self):
+    def get_queryset(self):
         user = models.User.objects.get(pk=self.request.kwargs['user_pk'])
         if not user:
             return models.models.QuerySet.none()
@@ -188,8 +188,23 @@ class ProfileSelf(generics.RetrieveUpdateAPIView):
         return user.profile
 
 
+class InfoSelf(generics.RetrieveAPIView):
+    permission_classes = (AllowAny,)
+    serializer_class = serializers.UserBriefSerializer
+
+    def get_object(self):
+        return self.request.user
+
+
 class UserDetail(generics.RetrieveAPIView):
     permission_classes = (AllowAny,)
     serializer_class = serializers.UserDetailSerializer
+    queryset = models.User.objects.all()
+    lookup_url_kwarg = 'user_pk'
+
+
+class UserInfo(generics.RetrieveAPIView):
+    permission_classes = (AllowAny,)
+    serializer_class = serializers.UserBriefSerializer
     queryset = models.User.objects.all()
     lookup_url_kwarg = 'user_pk'
