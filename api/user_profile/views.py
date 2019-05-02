@@ -135,7 +135,7 @@ class JournalsSelf(generics.ListCreateAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return user.journals_set.all()
+        return user.profile.journals_set.all()
 
     def perform_create(self, serializer):
         profile = self.request.user.profile
@@ -148,7 +148,8 @@ class ConfrencesSelf(generics.ListCreateAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return user.confrences_set.all()
+        print(user)
+        return user.profile.confrences_set.all()
 
     def perform_create(self, serializer):
         profile = self.request.user.profile
@@ -164,7 +165,7 @@ class UserJournals(generics.ListAPIView):
         user = models.User.objects.get(pk=self.request.kwargs['user_pk'])
         if not user:
             return models.models.QuerySet.none()
-        return models.Journals.objects.all().filter(user=user)
+        return user.profile.journals_set.all()
 
 
 class UserConfrences(generics.ListAPIView):
@@ -176,7 +177,7 @@ class UserConfrences(generics.ListAPIView):
         user = models.User.objects.get(pk=self.request.kwargs['user_pk'])
         if not user:
             return models.models.QuerySet.none()
-        return models.Confrences.objects.all().filter(user=user)
+        return user.profile.confrences_set.all()
 
 
 class ProfileSelf(generics.RetrieveUpdateAPIView):

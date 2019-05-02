@@ -65,7 +65,7 @@ class ConfrenceBriefSerializer(serializers.ModelSerializer):
 
 class ProfileDetailSerializer(serializers.ModelSerializer):
     journals = serializers.SerializerMethodField()
-    # confrences = serializers.SerializerMethodField()
+    confrences = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Profile
@@ -73,16 +73,16 @@ class ProfileDetailSerializer(serializers.ModelSerializer):
             'role', 'bio', 'gender',
             'department', 'institution',
             'dob', 'area_of_interest',
-            'journals'
+            'journals', 'confrences'
         )
 
     @swagger_serializer_method(JournalBriefSerializer(many=True))
     def get_journals(self, obj):
-        return obj.journals_set.all()
+        return JournalBriefSerializer(obj.journals_set.all(), many=True).data
 
-    # @swagger_serializer_method(ConfrenceBriefSerializer(many=True))
-    # def get_confrences(self, obj):
-    #     return obj.confrences_set.all()
+    @swagger_serializer_method(ConfrenceBriefSerializer(many=True))
+    def get_confrences(self, obj):
+        return ConfrenceBriefSerializer(obj.confrences_set.all(), many=True).data
 
 
 class ProfileSerializer(serializers.ModelSerializer):
